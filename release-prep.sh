@@ -28,7 +28,7 @@ genManpages=true
 read -d '' usage <<- EOF
 Usage: $scriptName version block_chain_size
 
-Run this script from the Bitcoin Core Source root directory. This requires a current version of Bitcoin Core
+Run this script from the Bitweb Core Source root directory. This requires a current version of Bitweb Core
 to be running at the time that this script is run.
 
 Arguments:
@@ -38,8 +38,8 @@ block_chain_size    The size of the blockchain for the intro display. Should con
                     overhead. Only required if BLOCK_CHAIN_SIZE will be updated. e.g. 120
 
 Options:
---datadir <path>    The path to the data directory of the running Bitcoin Core node. Note that this is 
-                    different from Bitcoin Core's -datadir option syntax. There is no equals, simply a space
+--datadir <path>    The path to the data directory of the running Bitweb Core node. Note that this is 
+                    different from Bitweb Core's -datadir option syntax. There is no equals, simply a space
                     followed by the path
 
 --skip [v|c|s|b|t|m]   Skip the specified steps. v=version bump; c=update nMinimumChainwork and defaultAssumeValid
@@ -139,20 +139,20 @@ then
 
     # docs
     sed -i "/PROJECT_NUMBER         = /c\PROJECT_NUMBER         = $VERSION" ./doc/Doxyfile
-    sed -i "1s/.*/Bitcoin Core $VERSION/" ./doc/README.md
-    sed -i "1s/.*/Bitcoin Core $VERSION/" ./doc/README_windows.txt
+    sed -i "1s/.*/Bitweb Core $VERSION/" ./doc/README.md
+    sed -i "1s/.*/Bitweb Core $VERSION/" ./doc/README_windows.txt
 
     # gitian descriptors
-    sed -i "2s/.*/name: \"bitcoin-win-$major.$minor\"/" ./contrib/gitian-descriptors/gitian-win.yml
-    sed -i "2s/.*/name: \"bitcoin-linux-$major.$minor\"/" ./contrib/gitian-descriptors/gitian-linux.yml
-    sed -i "2s/.*/name: \"bitcoin-osx-$major.$minor\"/" ./contrib/gitian-descriptors/gitian-osx.yml
+    sed -i "2s/.*/name: \"bitweb-win-$major.$minor\"/" ./contrib/gitian-descriptors/gitian-win.yml
+    sed -i "2s/.*/name: \"bitweb-linux-$major.$minor\"/" ./contrib/gitian-descriptors/gitian-linux.yml
+    sed -i "2s/.*/name: \"bitweb-osx-$major.$minor\"/" ./contrib/gitian-descriptors/gitian-osx.yml
 fi
 
 if [[ $chainparamsUpdate = true ]]
 then
     # Update nMinimumChainWork and defaultAssumeValid
     echo "Updating nMinimumChainWork and defaultAssumeValid"
-    blockchaininfo=`src/bitcoin-cli ${DATADIR} getblockchaininfo`
+    blockchaininfo=`src/bitweb-cli ${DATADIR} getblockchaininfo`
     chainwork=`echo "$blockchaininfo" | jq -r '.chainwork'`
     bestblockhash=`echo "$blockchaininfo" | jq -r '.bestblockhash'`
     sed -i "0,/        consensus.nMinimumChainWork = uint256S(.*/s//        consensus.nMinimumChainWork = uint256S(\"0x$chainwork\");/" ./src/chainparams.cpp

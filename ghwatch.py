@@ -31,7 +31,7 @@ DEFAULT_CONFIG = {
     #'browser': ['firefox', '--new-tab'],
 
     # Repository with github metadata mirror (to get label data)
-    'meta': {'bitcoin/bitcoin': '/path/to/bitcoin-gh-meta'},
+    'meta': {'bitweb-project/bitweb': '/path/to/bitweb-gh-meta'},
 
     # Interval in seconds for an automatic update (git pull) of github metadata mirror, if greater than 0.
     'auto_update': 0,
@@ -43,7 +43,7 @@ DEFAULT_CONFIG = {
     # When a PR or issue has multiple labels, the one with the highest priority will be
     # shown. This is pretty arbitary, roughly going from specific to aspecific,
     # and not a value judgement with regard to importance of components.
-    'label_prio': {'bitcoin/bitcoin': [
+    'label_prio': {'bitweb-project/bitweb': [
       'Consensus',
       'Mining',
       'Mempool',

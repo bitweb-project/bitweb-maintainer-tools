@@ -5,7 +5,7 @@ text and JSON format.
 
 Run this in the root directory of the repository.
 
-This requires an up-to-date checkout of https://github.com/zw/bitcoin-gh-meta.git
+This requires an up-to-date checkout of the ghrip backup (see ghrip.pl)
 in the parent directory, or environment variable `GHMETA`.
 
 It takes a range of commits and a .json file of PRs to exclude, for
@@ -14,13 +14,14 @@ generated from a previous release.
 
 Example usage:
 
-    ../maintainer-tools/list-pulls.py v28.0 29 relnot/pulls-exclude.json > relnot/pulls.md
+    ../maintainer-tools/list-pulls.py v1.0.0 master relnot/pulls-exclude.json > relnot/pulls.md
 
 The output of this script is a first draft based on rough heuristics, and
 likely needs to be extensively manually edited before ending up in the release
 notes.
 '''
 # W.J. van der Laan 2017-2021
+# Adapted for bitweb-project/bitweb
 # SPDX-License-Identifier: MIT
 import subprocess
 import re
@@ -31,15 +32,13 @@ from collections import namedtuple, defaultdict
 
 # == Global environment ==
 GIT = os.getenv('GIT', 'git')
-GHMETA = os.getenv('GHMETA', '../bitcoin-gh-meta')
-DEFAULT_REPO = os.getenv('DEFAULT_REPO', 'bitcoin/bitcoin')
+GHMETA = os.getenv('GHMETA', '../bitweb-gh-meta')
+DEFAULT_REPO = os.getenv('DEFAULT_REPO', 'bitweb-project/bitweb')
 
 # == Label to category mapping ==
-# See: https://github.com/bitcoin/bitcoin/labels
+# See: https://github.com/bitweb-project/bitweb/labels
 # this is priority ordering: the first label to be matched determines the
 # category it is slotted to
-# TODO: simply create titles for combinations of mappings, and leave it up to release note writer
-# which one to choose? this automatic choosing based on "priority" kind of sucks.
 LABEL_MAPPING = (
     # Consensus, mining and policy changes should come first
     ({'consensus'},
@@ -84,12 +83,12 @@ LABEL_MAPPING = (
 UNCATEGORIZED = 'Uncategorized'
 
 # == PR title prefix to category mapping ==
-# this takes precedence over the above label mapping 
+# this takes precedence over the above label mapping
 # handle (in all cases, ignoring including leading and trailing ' ')
 # SPECIFY IN LOWERCASE
 # set do_strip as False if the prefix adds information beyond what the category provides!
 # '[prefix]:' '[prefix]' 'prefix:'
-PREFIXES = [ 
+PREFIXES = [
     # (prefix, category, do_strip)
     ('bench', 'Tests and QA', False),
     ('build', 'Build system', True),
@@ -118,7 +117,7 @@ PREFIXES = [
     ('rest', 'RPC and other APIs', False),
     ('rpc', 'RPC and other APIs', True),
     ('scripted-diff', 'Refactoring', False),
-    ('script', 'Miscellaneous', False), # !!! this is unclear, 'script' could also be block/tx handling or even consensus
+    ('script', 'Miscellaneous', False),
     ('scripts', 'Miscellaneous', False),
     ('shutdown', 'Miscellaneous', False),
     ('tests', 'Tests and QA', True),
@@ -134,18 +133,11 @@ PREFIXES = [
 
 # Per-repository information
 REPO_INFO = {
-    'bitcoin/bitcoin': {
+    'bitweb-project/bitweb': {
         'label_mapping': LABEL_MAPPING,
         'prefixes': PREFIXES,
         'default_category': UNCATEGORIZED,
         'ghmeta': GHMETA,
-    },
-    # For now, GUI repository pulls are automatically categorized into the GUI category.
-    'bitcoin-core/gui': {
-        'label_mapping': (),
-        'prefixes': [],
-        'default_category': 'GUI',
-        'ghmeta': None,
     },
 }
 
@@ -205,20 +197,17 @@ class FQId:
 
 def tests():
     '''Quick internal sanity tests.'''
-    assert(FQId.parse('bitcoin/bitcoin#1234', 'bitcoin/bitcoin') == FQId('bitcoin', 'bitcoin', 1234))
-    assert(FQId.parse('bitcoin-core/gui#1235', 'bitcoin/bitcoin') == FQId('bitcoin-core', 'gui', 1235))
-    assert(FQId.parse('#1236', 'bitcoin/bitcoin') == FQId('bitcoin', 'bitcoin', 1236))
-    assert(FQId.parse('1237', 'bitcoin/bitcoin') == FQId('bitcoin', 'bitcoin', 1237))
-    assert(str(FQId('bitcoin', 'bitcoin', 1239)) == 'bitcoin/bitcoin#1239')
-    assert(FQId('bitcoin', 'bitcoin', 1239) < FQId('bitcoin', 'bitcoin', 1240))
-    assert(not (FQId('bitcoin', 'bitcoin', 1240) < FQId('bitcoin', 'bitcoin', 1239)))
-    assert(FQId('bitcoin', 'bitcoin', 1240) < FQId('bitcoin-core', 'gui', 1239))
-    assert(not (FQId('bitcoin-core', 'gui', 1239) < FQId('bitcoin', 'bitcoin', 1240)))
+    assert(FQId.parse('bitweb-project/bitweb#1234', 'bitweb-project/bitweb') == FQId('bitweb-project', 'bitweb', 1234))
+    assert(FQId.parse('#1236', 'bitweb-project/bitweb') == FQId('bitweb-project', 'bitweb', 1236))
+    assert(FQId.parse('1237', 'bitweb-project/bitweb') == FQId('bitweb-project', 'bitweb', 1237))
+    assert(str(FQId('bitweb-project', 'bitweb', 1239)) == 'bitweb-project/bitweb#1239')
+    assert(FQId('bitweb-project', 'bitweb', 1239) < FQId('bitweb-project', 'bitweb', 1240))
+    assert(not (FQId('bitweb-project', 'bitweb', 1240) < FQId('bitweb-project', 'bitweb', 1239)))
 
 # == Main program ==
 tests()
-ref_from = sys.argv[1] # 'v29.1rc1'
-ref_to = sys.argv[2] # 'master'
+ref_from = sys.argv[1] # e.g. 'v1.0.0'
+ref_to = sys.argv[2]   # e.g. 'master'
 
 # read exclude file
 exclude_pulls = set()
@@ -269,7 +258,7 @@ def parse_commit_message(msg):
     for line in msg.splitlines():
         if line.startswith('Github-Pull:'):
             param = line[12:].strip()
-            if param.startswith('#'): # compensate for incorrect #bitcoin-core/gui#148
+            if param.startswith('#'):
                 param = param[1:]
             retval.pull = FQId.parse(param, DEFAULT_REPO)
         if line.startswith('Rebased-From:'):
@@ -292,7 +281,6 @@ for c in commit_data.values():
         if match: # merges a pull request
             if c.sha in orphans:
                 orphans.remove(c.sha)
-            #print('removing ', c.sha)
             sub_commits = subprocess.check_output([GIT, 'rev-list', c.parents[0]+'..'+c.parents[1]])
             sub_commits = sub_commits.decode()
             sub_commits = set(sub_commits.rstrip().splitlines())
@@ -305,15 +293,10 @@ for c in commit_data.values():
                     orphans.remove(cs)
 
             if not pull in exclude_pulls:
-                # if any sub-commits left, report them
                 if sub_commits:
-                    # only report pull if any new commit went into the release
                     index = commits_list.index(c.sha)
                     pulls[pull] = PullData(pull, c.sha, sub_commits, index)
 
-                    # look up commits and see if they point to master pulls
-                    # (=backport pull)
-                    # add those too
                     sub_pulls = defaultdict(list)
                     for cid in sub_commits:
                         md = parse_commit_message(commit_data[cid].message)
@@ -321,7 +304,6 @@ for c in commit_data.values():
                             sub_pulls[md.pull].append(cid)
 
                     if not sub_pulls and 'backport' in c.title.lower():
-                        # just information for manual checking
                         print(f'{pull}: Merge PR title {repr(c.title)} contains \'backport\' but there are no sub-pulls')
 
                     for (sub_pull, sub_pull_commits) in sub_pulls.items():
@@ -338,11 +320,9 @@ for o in set(orphans):
         orphans.remove(o)
 
 # Sort by index in commits list
-# This results in approximately chronological order
 pulls_order = list(pulls.values())
 pulls_order.sort(key=lambda p:p.index)
 pulls_order = [p.id for p in pulls_order]
-# pulls_order = sorted(pulls.keys())
 
 def guess_category_from_labels(repo_info, labels):
     '''
@@ -368,7 +348,7 @@ def get_category(repo_info, labels, message):
             if message.lower().startswith(variant):
                 category = p_category
                 message = message[len(variant):].lstrip()
-                if not do_strip: # if strip is not requested, re-add prefix in sanitized way
+                if not do_strip:
                     message = prefix + ': ' + message.capitalize()
 
     return (category, message)
@@ -377,7 +357,9 @@ pull_meta = {}
 pull_labels = {}
 per_category = defaultdict(list)
 for pull in pulls_order:
-    repo_info = REPO_INFO[f'{pull.owner}/{pull.repo}']
+    repo_key = f'{pull.owner}/{pull.repo}'
+    # Fall back to bitweb-project/bitweb info if repo not in REPO_INFO
+    repo_info = REPO_INFO.get(repo_key, REPO_INFO['bitweb-project/bitweb'])
 
     # Find github metadata for PR, if available
     data0 = None
@@ -418,9 +400,9 @@ for pull in pulls_order:
     data1['title'] = message
 
     per_category[category].append((pull, message, author))
-    pull_labels[pull] = labels 
+    pull_labels[pull] = labels
     pull_meta[pull] = data1
-    
+
 for _,category in LABEL_MAPPING:
     if not per_category[category]:
         continue
@@ -463,4 +445,3 @@ data_out = {
 with open('pulls.json','w') as f:
     json.dump(data_out, f, sort_keys=True,
                            indent=4, separators=(',', ': '))
-

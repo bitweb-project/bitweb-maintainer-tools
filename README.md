@@ -90,7 +90,7 @@ the [Transifex CLI](https://github.com/transifex/cli).
 clang-format
 ------------
 
-A script to format cpp source code according to the .clang-format file in the bitcoin repo.
+A script to format cpp source code according to the .clang-format file in the bitweb repo.
 This should only be applied to new files or files which are currently not actively developed on.
 Also, git subtrees are not subject to formatting.
 
@@ -104,7 +104,7 @@ Build for binary comparison.
 
 See `build-for-compare.py --help` for more information.
 
-Builds from current directory, which is assumed to be a git clone of the bitcoin repository.
+Builds from current directory, which is assumed to be a git clone of the bitweb repository.
 
 **DO NOT RUN this with the nocopy=1 flag set on working tree if you have any local additions, it will nuke all
 non-repository files, multiple times over. By leaving nocopy off (default) the git tree is copied to a temporary
@@ -112,10 +112,10 @@ directory and all operations are performed there.**
 
 Example:
 ```bash
-git clone https://github.com/bitcoin/bitcoin.git bitcoin-compare
-cd bitcoin-compare
-../bitcoin-maintainer-tools/build-for-compare.py 4731cab 2f71490
-sha256sum /tmp/compare/bitcoind.*.stripped
+git clone https://github.com/bitweb-project/bitweb.git bitweb-compare
+cd bitwb-compare
+../bitweb-maintainer-tools/build-for-compare.py 4731cab 2f71490
+sha256sum /tmp/compare/bitwebd.*.stripped
 git diff -W --word-diff /tmp/compare/4731cab /tmp/compare/2f71490
 ```
 
@@ -127,7 +127,7 @@ Pull ids are listed in `to_backport.txt` or given on the command line, and they 
 with the repository name, e.g.:
 
 ```bash
-../bitcoin-maintainer-tools/backport.py bitcoin/bitcoin#21907 bitcoin-core/gui#277 bitcoin-core/gui#365
+../bitweb-maintainer-tools/backport.py bitweb-project/bitweb#21907 bitweb#277 bitweb#365
 
 ```
 
@@ -140,12 +140,12 @@ unittest-statistics
 
 Usage:
 ```bash
-unittest-statistics.py </path/to/test_bitcoin> [<subtest>]
+unittest-statistics.py </path/to/test_bitweb> [<subtest>]
 ```
 
 For example:
 ```bash
-unittest-statistics.py src/test/test_bitcoin wallet_tests
+unittest-statistics.py src/test/test_bitweb wallet_tests
 ```
 
 treehash512
@@ -187,7 +187,7 @@ signed. If so it just displays the signature, if not, it is signed.
 subtree updates
 ---------------
 
-Bitcoin Core comes with several subtrees (c.f. https://github.com/bitcoin/bitcoin/tree/master/test/lint#git-subtree-checksh)
+Bitweb Core comes with several subtrees (c.f. https://github.com/bitweb-project/bitweb/tree/master/test/lint#git-subtree-checksh)
 To update the subtree, make sure to fetch the remote of the subtree.
 Then a simple call should pull in and squash the changes:
 
@@ -230,10 +230,10 @@ OK   testnet-seed.bluematt.me (5 results)
 fastcopy-chaindata
 -------------------
 
-Fast local copy of Bitcoin Core blockchain state.
+Fast local copy of Bitweb Core blockchain state.
 
 ```bash
-fastcopy-chaindata.py ~/.bitcoin /path/to/temp/datadir
+fastcopy-chaindata.py ~/.bitweb /path/to/temp/datadir
 ```
 
 This utility hardlinks all but the last block data file (rev and blk),
@@ -254,7 +254,7 @@ text and json format.
 
 Run this in the root directory of the repository.
 
-This requires an up-to-date checkout of https://github.com/zw/bitcoin-gh-meta.git
+This requires an up-to-date checkout of https://github.com/bitweb-project/bitweb-gh-meta.git
 in the parent directory, or environment variable `GHMETA`.
 
 It takes a range of commits and a .json file of PRs to exclude, for
@@ -301,14 +301,14 @@ Then, edit the configuration file. Only thing that is necessary to change is `gh
 
 Depending on your browser preference you might want to change `browser`, this is the command that will be invoked when clicking on an issue number. It defaults to `null` which indicates to use the system web browser.
 
-If you want to see PR status (and other issue details like labels), point `meta` for the `bitcoin/bitcoin` repository to an up-to-date checkout of [bitcoin-gh-meta](https://github.com/zw/bitcoin-gh-meta).
+If you want to see PR status (and other issue details like labels), point `meta` for the `bitweb-project/bitweb` repository to an up-to-date checkout of [bitweb-gh-meta](https://github.com/bitweb-project/bitweb-gh-meta).
 ```
     "meta": {
-        "bitcoin/bitcoin": "/path/to/bitcoin-gh-meta"
+        "bitweb-project/bitweb": "/path/to/bitweb-gh-meta"
     },
 ```
 
-To keep this repository up to date you can set the interval in seconds in 'auto_update', default is 0 (i.e. no automatic update). Be aware that [bitcoin-gh-meta](https://github.com/zw/bitcoin-gh-meta) is being refreshed every two hours (7200 seconds).
+To keep this repository up to date you can set the interval in seconds in 'auto_update', default is 0 (i.e. no automatic update). Be aware that [bitweb-gh-meta](https://github.com/bitweb-project/bitweb-gh-meta) is being refreshed every two hours (7200 seconds).
 
 Sorting the notifications by {reason, time} can be enabled with the 'sort_notifications' boolean field (default=false).
 

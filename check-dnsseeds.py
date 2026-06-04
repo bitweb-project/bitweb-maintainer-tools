@@ -1,35 +1,54 @@
 #!/usr/bin/env python3
 '''
-Simple script to check the status of all Bitcoin Core DNS seeds.
-Seeds are available from https://github.com/bitcoin/bitcoin/blob/master/src/kernel/chainparams.cpp
+Simple script to check the status of all Bitweb Core DNS seeds.
+Seeds are available from https://github.com/bitweb-project/bitweb/blob/master/src/kernel/chainparams.cpp
 '''
 import subprocess
 
 SEEDS_PER_NETWORK={
     'mainnet': [
-        "seed.bitcoin.sipa.be",
-        "dnsseed.bluematt.me",
-        "seed.bitcoin.jonasschnelli.ch",
-        "seed.btc.petertodd.net",
-        "seed.bitcoin.sprovoost.nl",
-        "dnsseed.emzy.de",
-        "seed.bitcoin.wiz.biz",
-        "seed.mainnet.achownodes.xyz",
+        "seed.bitwebcore.net",
+        "seed1.bitwebcore.net",
+        "seed2.bitwebcore.net",
+        "seed3.bitwebcore.net",
+        "seed4.bitwebcore.net",
+        "seed5.bitwebcore.net",
+        "seed6.bitwebcore.net",
+        "bitwebseed.dpowcore.org",
+        "bitwebseed1.dpowcore.org",
     ],
     'testnet': [
-        "testnet-seed.bitcoin.jonasschnelli.ch",
-        "seed.tbtc.petertodd.net",
-        "testnet-seed.bluematt.me",
-        "seed.testnet.bitcoin.sprovoost.nl",
-        "seed.testnet.achownodes.xyz",
+        "testnet3seed.bitwebcore.net",
+        "testnet3seed1.bitwebcore.net",
+        "testnet3seed2.bitwebcore.net",
+        "testnet3seed3.bitwebcore.net",
+        "testnet3seed4.bitwebcore.net",
+        "testnet3seed5.bitwebcore.net",
+        "testnet3seed6.bitwebcore.net",
+        "bitwebtest3seed.dpowcore.org",
+        "bitwebtest3seed1.dpowcore.org",
     ],
     'testnet4': [
-        "seed.testnet4.bitcoin.sprovoost.nl",
-        "seed.testnet4.wiz.biz",
+        "testnet4seed.bitwebcore.net",
+        "testnet4seed1.bitwebcore.net",
+        "testnet4seed2.bitwebcore.net",
+        "testnet4seed3.bitwebcore.net",
+        "testnet4seed4.bitwebcore.net",
+        "testnet4seed5.bitwebcore.net",
+        "testnet4seed6.bitwebcore.net",
+        "bitwebtest4seed.dpowcore.org",
+        "bitwebtest4seed1.dpowcore.org",
     ],
     'signet': [
-        "seed.signet.bitcoin.sprovoost.nl",
-        "seed.signet.achownodes.xyz"
+        "testnet4seed.bitwebcore.net",
+        "testnet4seed1.bitwebcore.net",
+        "testnet4seed2.bitwebcore.net",
+        "testnet4seed3.bitwebcore.net",
+        "testnet4seed4.bitwebcore.net",
+        "testnet4seed5.bitwebcore.net",
+        "testnet4seed6.bitwebcore.net",
+        "bitwebtest4seed.dpowcore.org",
+        "bitwebtest4seed1.dpowcore.org",
     ],
 }
 

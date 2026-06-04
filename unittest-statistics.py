@@ -7,8 +7,8 @@ import os
 def main():
     if len(sys.argv) < 2:
         tool = os.path.basename(sys.argv[0])
-        print('Usage: {} </path/to/test_bitcoin> [<subtest>]'.format(tool))
-        print('For example: {} src/test/test_bitcoin wallet_tests'.format(tool))
+        print('Usage: {} </path/to/test_bitweb> [<subtest>]'.format(tool))
+        print('For example: {} src/test/test_bitweb wallet_tests'.format(tool))
         exit(1)
     test_bitcoin = sys.argv[1]
     args = [test_bitcoin, '--log_level=test_suite']

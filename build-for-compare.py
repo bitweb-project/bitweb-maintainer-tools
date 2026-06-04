@@ -2,7 +2,7 @@
 # Written by W.J. van der Laan, provided under MIT license.
 #
 # Usage: ../do_build.py <hash> [<hash> ...]
-# Will produce a ../bitcoind.$1.stripped for binary comparison
+# Will produce a ../bitwebd.$1.stripped for binary comparison
 import os,subprocess,sys,argparse,logging,shutil,re,hashlib,shlex,tempfile
 from collections import defaultdict
 from typing import List
@@ -64,7 +64,7 @@ CPPFLAGS=[]
 OBJCOPY_ARGS=['-R.note.gnu.build-id','-g','-S']
 OBJDUMP_ARGS=['-C','--no-show-raw-insn','-d','-r']
 
-# Set QT_RCC_SOURCE_DATE_OVERRIDE so that bitcoin-qt is deterministic
+# Set QT_RCC_SOURCE_DATE_OVERRIDE so that bitweb-qt is deterministic
 os.environ['QT_RCC_SOURCE_DATE_OVERRIDE'] = '1'
 
 # These can be overridden from the environment
@@ -207,7 +207,7 @@ def objdump_all(srcdir: str, tgtdir: str):
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Build to compare binaries. Execute this from a repository directory.')
     parser.add_argument('commitids', metavar='COMMITID', nargs='+')
-    parser.add_argument('--executables', default='src/bitcoind', help='Comma-separated list of executables to build, default is "src/bitcoind"')
+    parser.add_argument('--executables', default='src/bitwebd', help='Comma-separated list of executables to build, default is "src/bitwebd"')
     parser.add_argument('--tgtdir', default=DEFAULT_TGTDIR, help='Target directory, default is "{}"'.format(DEFAULT_TGTDIR))
     parser.add_argument('--repodir', default=DEFAULT_REPODIR, help='Temp repository directory, default is "{}"'.format(DEFAULT_REPODIR))
     parser.add_argument('--parallelism', '-j', default=DEFAULT_PARALLELISM, type=int, help='Make parallelism, default is {}'.format(DEFAULT_PARALLELISM))
