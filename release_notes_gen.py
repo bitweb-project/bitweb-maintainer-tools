@@ -10,7 +10,7 @@ Usage:
   python release_notes.py --repo /path/to/coin --last 10
 
 At the end, the script will ask you to enter the version number.
-Output: RELEASE_NOTES.md
+Output: release-notes.md
 """
 
 import os
@@ -477,7 +477,7 @@ def main():
     parser.add_argument("--last",   type=int,        default=None,
                         help="Use last N commits instead of a range")
     parser.add_argument("--slug",   default=None,    help="Override GitHub user/repo")
-    parser.add_argument("--output", default="RELEASE_NOTES.md")
+    parser.add_argument("--output", default="release-notes.md")
     args = parser.parse_args()
 
     repo = os.path.abspath(args.repo)
