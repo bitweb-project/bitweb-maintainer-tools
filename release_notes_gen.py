@@ -24,10 +24,10 @@ import argparse
 #  COIN CONFIGURATION — edit these before use
 # ══════════════════════════════════════════════════════════════════════════════
 
-COIN_NAME        = "MyCoin"                              # Short name — used for paths, binaries, dirs
-COIN_FULLNAME    = "MyCoin Core"                         # Full display name — used in text
-COIN_TICKER      = "MYC"                                 # Ticker symbol
-COIN_WEBSITE     = "https://mycoin.org"                  # Main website (optional, can be empty)
+COIN_NAME        = "Bitweb"                              # Short name — used for paths, binaries, dirs
+COIN_FULLNAME    = "Bitweb Core"                         # Full display name — used in text
+COIN_TICKER      = "BTE"                                 # Ticker symbol
+COIN_WEBSITE     = "https://bitwebcore.net"                  # Main website (optional, can be empty)
 COIN_GITHUB      = "bitweb-project/bitweb"                  # GitHub user/repo (primary)
 COIN_ISSUES      = "https://github.com/bitweb-project/bitweb/issues"
 COIN_RELEASES    = "https://github.com/bitweb-project/bitweb/releases"  # Primary download
@@ -67,8 +67,8 @@ CT_DELETED  = "deleted"
 # ══════════════════════════════════════════════════════════════════════════════
 
 def run(cmd, cwd):
-    result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
-    return result.stdout.strip()
+    result = subprocess.run(cmd, cwd=cwd, capture_output=True)
+    return result.stdout.decode('utf-8', errors='replace').strip()
 
 
 def get_full_hash(repo, ref):
