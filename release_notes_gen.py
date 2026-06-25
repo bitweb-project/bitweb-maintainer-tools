@@ -31,6 +31,7 @@ COIN_WEBSITE     = "https://bitwebcore.net"                  # Main website (opt
 COIN_GITHUB      = "bitweb-project/bitweb"                  # GitHub user/repo (primary)
 COIN_ISSUES      = "https://github.com/bitweb-project/bitweb/issues"
 COIN_RELEASES    = "https://github.com/bitweb-project/bitweb/releases"  # Primary download
+COIN_DOWNLOAD    = "https://bitwebcore.net/en/wallets/full-node/"        # Website download page
 
 # OS compatibility (edit to match your supported platforms)
 COMPAT_LINUX     = "Linux Kernel 3.17+"
@@ -328,10 +329,10 @@ def render_header(version, slug):
     ]
 
     # Optional website mirror link
-    if COIN_WEBSITE:
+    if COIN_DOWNLOAD:
         lines += [
             "",
-            f"  <{COIN_WEBSITE}/bin/{coin_lc}-{version}/>  (mirror)",
+            f"  <{COIN_DOWNLOAD}>",
         ]
 
     lines += [
